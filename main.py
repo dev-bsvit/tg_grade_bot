@@ -536,9 +536,14 @@ async def main() -> None:
         await start_health_server()
 
     app.post_init = post_init
-    app.run_polling(drop_pending_updates=True)  # drop_pending_updates=True очищает старые обновления
+    await app.initialize()
+    await app.start()
+    await app.updater.start_polling(drop_pending_updates=True)
+    await app.updater.wait_for_stop()
+    await app.stop()
+    await app.shutdown()
 
 if __name__ == "__main__":
     import nest_asyncio
     nest_asyncio.apply()
-    asyncio.get_event_loop().run_until_complete(main())
+    asyncio.run(main())
