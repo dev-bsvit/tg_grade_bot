@@ -501,8 +501,9 @@ async def start_health_server():
     site = aiohttp.web.TCPSite(runner, '0.0.0.0', 8080)
     await site.start()
 
-def main() -> None:
+async def main() -> None:
     app = Application.builder().token(TOKEN).build()
+    await app.bot.delete_webhook(drop_pending_updates=True)
     # Conversation handler
     conv = ConversationHandler(
         entry_points=[CommandHandler("start", start)],
@@ -537,4 +538,4 @@ def main() -> None:
     app.run_polling(drop_pending_updates=True)  # drop_pending_updates=True очищает старые обновления
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
