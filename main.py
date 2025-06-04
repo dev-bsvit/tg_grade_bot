@@ -1,8 +1,37 @@
+#
 # -*- coding: utf-8 -*-
+
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
+# ---------------------- ВСТАВКА: Простой HTTP-сервер ----------------------
+#
+# Этот код запускает маленький HTTP-сервер на порту из переменной окружения PORT.
+# Render автоматически задаёт PORT, и благодаря этому сервер «увидит» открытый порт,
+# не завершит Web Service с ошибкой «no open ports detected».
+#
+class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        # Всегда отвечаем 200 OK
+        self.send_response(200)
+        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(b"OK")
+
+def start_http_server():
+    port = int(os.environ.get("PORT", "8080"))
+    server = HTTPServer(("0.0.0.0", port), SimpleHandler)
+    server.serve_forever()
+
+# Запускаем HTTP-сервер в отдельном потоке, чтобы не блокировать бота
+threading.Thread(target=start_http_server, daemon=True).start()
+# ------------------------------------------------------------------------------
+
 import os, sys, logging
 from pathlib import Path
 
 import asyncio
+import aiohttp.web
 
 from dotenv import load_dotenv
 from telegram import (
@@ -449,6 +478,17 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
         clear_user_data(context)
 
 # Main
+async def health(request):
+    return aiohttp.web.Response(text="OK")
+
+async def start_health_server():
+    app = aiohttp.web.Application()
+    app.router.add_get('/health', health)
+    runner = aiohttp.web.AppRunner(app)
+    await runner.setup()
+    site = aiohttp.web.TCPSite(runner, '0.0.0.0', 8080)
+    await site.start()
+
 def main() -> None:
     app = Application.builder().token(TOKEN).build()
     # Conversation handler
@@ -476,6 +516,12 @@ def main() -> None:
     # Обработчик ошибок
     app.add_error_handler(error_handler)
     logging.info("Bot is running…")
+
+    async def post_init(application):
+        # Start aiohttp health server in the same asyncio loop
+        await start_health_server()
+
+    app.post_init = post_init
     app.run_polling(drop_pending_updates=True)  # drop_pending_updates=True очищает старые обновления
 
 if __name__ == "__main__":
