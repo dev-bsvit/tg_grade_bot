@@ -1,7 +1,14 @@
 #
 # -*- coding: utf-8 -*-
 
+import os
+import asyncio
 import threading
+
+try:
+    import aiohttp.web
+except ImportError:
+    aiohttp = None
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 # ---------------------- ВСТАВКА: Простой HTTP-сервер ----------------------
@@ -27,11 +34,14 @@ def start_http_server():
 threading.Thread(target=start_http_server, daemon=True).start()
 # ------------------------------------------------------------------------------
 
-import os, sys, logging
+import sys, logging
 from pathlib import Path
 
 import asyncio
-import aiohttp.web
+try:
+    import aiohttp.web
+except ImportError:
+    aiohttp = None
 
 from dotenv import load_dotenv
 from telegram import (
@@ -482,6 +492,8 @@ async def health(request):
     return aiohttp.web.Response(text="OK")
 
 async def start_health_server():
+    if aiohttp is None:
+        return
     app = aiohttp.web.Application()
     app.router.add_get('/health', health)
     runner = aiohttp.web.AppRunner(app)
