@@ -522,7 +522,8 @@ async def main():
     application.add_handler(conv)
     application.add_handler(CommandHandler("start", start))
 
-    application.run_polling()
+    await start_health_server()
+    await application.run_polling()
 
 if __name__ == '__main__':
     import asyncio
