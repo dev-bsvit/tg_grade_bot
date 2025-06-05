@@ -502,46 +502,15 @@ async def start_health_server():
     site = aiohttp.web.TCPSite(runner, '0.0.0.0', 8080)
     await site.start()
 
-async def main() -> None:
-    app = Application.builder().token(TOKEN).build()
-    await app.bot.delete_webhook(drop_pending_updates=True)
-    # Conversation handler
-    conv = ConversationHandler(
-        entry_points=[CommandHandler("start", start)],
-        states={
-            WAIT_START: [CallbackQueryHandler(begin_callback, pattern="^begin$")],
-            CHECK_SUBSCRIPTION: [CallbackQueryHandler(check_subscription_callback, pattern="^check_sub$")],
-            ASKING: [
-                CallbackQueryHandler(answer_callback, pattern="^[0-3]$"),
-                CallbackQueryHandler(prev_callback, pattern="^prev$")
-            ],
-        },
-        fallbacks=[CommandHandler("cancel", cancel)],
-        # Добавляем per_user=True для изоляции состояний между пользователями
-        per_user=True,
-        per_chat=True,
-    )
-    # Добавляем обработчики
-    app.add_handler(conv)
-    # Обработчик для команды start вне conversation handler
-    app.add_handler(CommandHandler("start", start))
-    # Обработчик для всех остальных сообщений
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_unknown_message))
-    # Обработчик ошибок
-    app.add_error_handler(error_handler)
-    logging.info("Bot is running…")
+async def main():
+    application = Application.builder().token(TOKEN).build()
 
-    async def post_init(application):
-        # Start aiohttp health server in the same asyncio loop
-        await start_health_server()
+    # Все хендлеры
+    application.add_handler(conv)
+    application.add_handler(CommandHandler("start", start))
 
-    app.post_init = post_init
-    await app.initialize()
-    await app.start()
-    await app.updater.start_polling(drop_pending_updates=True)
-    await app.updater.wait_for_stop()
-    await app.stop()
-    await app.shutdown()
+    # Запуск
+    await application.run_polling()
 
 if __name__ == "__main__":
     import nest_asyncio
