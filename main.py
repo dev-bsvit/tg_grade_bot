@@ -505,7 +505,21 @@ async def start_health_server():
 async def main():
     application = Application.builder().token(TOKEN).build()
 
-    # Все хендлеры
+    # Conversation handler
+    conv = ConversationHandler(
+        entry_points=[CommandHandler("start", start)],
+        states={
+            WAIT_START: [CallbackQueryHandler(begin_callback, pattern="^begin$")],
+            ASKING: [
+                CallbackQueryHandler(answer_callback, pattern="^[0-9]$"),
+                CallbackQueryHandler(prev_callback, pattern="^prev$"),
+            ],
+            CHECK_SUBSCRIPTION: [
+                CallbackQueryHandler(check_subscription_callback, pattern="^check_sub$")
+            ],
+        },
+        fallbacks=[CommandHandler("start", start)],
+    )
     application.add_handler(conv)
     application.add_handler(CommandHandler("start", start))
 
