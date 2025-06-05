@@ -331,18 +331,18 @@ async def ask_question(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def show_loading_animation(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Показывает анимацию загрузки результата"""
     loading_frames = [
-        "🔮 Считаем твой результат\n\n[⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪] 0%",
-        "🔮 Считаем твой результат\n\n[🔵⚪⚪⚪⚪⚪⚪⚪⚪⚪] 10%",
-        "🔮 Считаем твой результат\n\n[🔵🔵⚪⚪⚪⚪⚪⚪⚪⚪] 20%",
-        "🔮 Считаем твой результат\n\n[🔵🔵🔵⚪⚪⚪⚪⚪⚪⚪] 30%",
-        "🔮 Считаем твой результат\n\n[🔵🔵🔵🔵⚪⚪⚪⚪⚪⚪] 40%",
-        "🔮 Считаем твой результат\n\n[🔵🔵🔵🔵🔵⚪⚪⚪⚪⚪] 50%",
-        "🔮 Считаем твой результат\n\n[🔵🔵🔵🔵🔵🔵⚪⚪⚪⚪] 60%",
-        "🔮 Считаем твой результат\n\n[🔵🔵🔵🔵🔵🔵🔵⚪⚪⚪] 70%",
-        "🔮 Считаем твой результат\n\n[🔵🔵🔵🔵🔵🔵🔵🔵⚪⚪] 80%",
-        "🔮 Считаем твой результат\n\n[🔵🔵🔵🔵🔵🔵🔵🔵🔵⚪] 90%",
-        "🔮 Считаем твой результат\n\n[🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵] 100%",
-        "✨ Результат готов! ✨"
+        "🔮 Рахуємо твій результат\n\n[⚪⚪⚪⚪⚪⚪⚪⚪⚪⚪] 0%",
+        "🔮 Рахуємо твій результат\n\n[🔵⚪⚪⚪⚪⚪⚪⚪⚪⚪] 10%",
+        "🔮 Рахуємо твій результат\n\n[🔵🔵⚪⚪⚪⚪⚪⚪⚪⚪] 20%",
+        "🔮 Рахуємо твій результат\n\n[🔵🔵🔵⚪⚪⚪⚪⚪⚪⚪] 30%",
+        "🔮 Рахуємо твій результат\n\n[🔵🔵🔵🔵⚪⚪⚪⚪⚪⚪] 40%",
+        "🔮 Рахуємо твій результат\n\n[🔵🔵🔵🔵🔵⚪⚪⚪⚪⚪] 50%",
+        "🔮 Рахуємо твій результат\n\n[🔵🔵🔵🔵🔵🔵⚪⚪⚪⚪] 60%",
+        "🔮 Рахуємо твій результат\n\n[🔵🔵🔵🔵🔵🔵🔵⚪⚪⚪] 70%",
+        "🔮 Рахуємо твій результат\n\n[🔵🔵🔵🔵🔵🔵🔵🔵⚪⚪] 80%",
+        "🔮 Рахуємо твій результат\n\n[🔵🔵🔵🔵🔵🔵🔵🔵🔵⚪] 90%",
+        "🔮 Рахуємо твій результат\n\n[🔵🔵🔵🔵🔵🔵🔵🔵🔵🔵] 100%",
+        "✨ Результат готовий! ✨"
     ]
     # Отправляем первый кадр
     loading_message = await context.bot.send_message(
@@ -417,11 +417,9 @@ async def answer_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await asyncio.sleep(5)
 
-    subscribe_btn = InlineKeyboardButton("🔔 Підписатися на канал", url=CHANNEL_LINK)
     linkedin_btn = InlineKeyboardButton("LinkedIn", url="https://www.linkedin.com/in/bohdan-svitlyk-960481a0/")
     instagram_btn = InlineKeyboardButton("Instagram", url="https://www.instagram.com/bogdan_svit?igsh=dDdqOXNzOTQ5cHkw")
     markup = InlineKeyboardMarkup([
-        [subscribe_btn],
         [linkedin_btn, instagram_btn]
     ])
 
