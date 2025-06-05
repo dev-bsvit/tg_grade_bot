@@ -3,7 +3,6 @@
 
 import logging
 import os
-import asyncio
 import threading
 
 try:
@@ -523,8 +522,7 @@ async def main():
     application.add_handler(conv)
     application.add_handler(CommandHandler("start", start))
 
-    await application.run_polling()
+    application.run_polling()
 
 if __name__ == '__main__':
-    import asyncio
-    asyncio.run(main())
+    main()
