@@ -532,4 +532,6 @@ async def main():
     await application.shutdown()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    import asyncio
+    asyncio.get_event_loop().create_task(main())
+    asyncio.get_event_loop().run_forever()
